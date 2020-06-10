@@ -45,7 +45,6 @@ stock_date_matrix_tbl
 
 ## Step 3 - Perform K-Means Clustering
 
-stock_date_matrix_tbl
 
 
 
