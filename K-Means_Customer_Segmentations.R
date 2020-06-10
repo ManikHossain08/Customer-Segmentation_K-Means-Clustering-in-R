@@ -45,7 +45,7 @@ stock_date_matrix_tbl
 
 ## Step 3 - Perform K-Means Clustering
 
-
+https://github.com/ManikHossain08/Customer-Segmentation-using-R.git
 
 
 
