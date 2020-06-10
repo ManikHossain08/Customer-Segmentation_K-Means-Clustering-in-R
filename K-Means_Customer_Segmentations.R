@@ -44,8 +44,37 @@ stock_date_matrix_tbl <- sp_500_daily_returns_tbl %>%
 stock_date_matrix_tbl
 
 ## Step 3 - Perform K-Means Clustering
+kmeans_obj <- stock_date_matrix_tbl %>%
+    select(-symbol) %>%
+    kmeans(centers = 4, nstart = 20)
 
-https://github.com/ManikHossain08/Customer-Segmentation-using-R.git
+kmeans_obj %>% glance()
+
+## Step 4 - Find the optimal value of K
+    # Lets use `purrr` to iterate over many values of "k" using the `centers` argument. 
+kmeans_mapper <- function(center = 3) {
+    stock_date_matrix_tbl %>%
+        select(-symbol) %>%
+        kmeans(centers = center, nstart = 20)
+}
+
+    # Apply the `kmeans_mapper()` and `glance()` functions iteratively using `purrr`.
+
+k_means_mapped_tbl <- tibble(centers = 1:30) %>%
+    mutate(k_means = centers %>% map(kmeans_mapper)) %>%
+    mutate(glance  = k_means %>% map(glance))
+
+    #Next, let's visualize the "tot.withinss" from the glance output as a ___Scree Plot___. 
+
+k_means_mapped_tbl %>%
+    
+    unnest(glance) %>%
+    
+    ggplot(aes(centers, tot.withinss)) +
+    geom_point(color = "#2c3e50") +
+    geom_line(color = "#2c3e50") +
+    labs(title = "Scree Plot") +
+    theme_tq()
 
 
 
