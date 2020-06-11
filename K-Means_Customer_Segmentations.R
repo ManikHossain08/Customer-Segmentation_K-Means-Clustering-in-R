@@ -67,22 +67,32 @@ k_means_mapped_tbl <- tibble(centers = 1:30) %>%
     #Next, let's visualize the "tot.withinss" from the glance output as a ___Scree Plot___. 
 
 k_means_mapped_tbl %>%
-    
     unnest(glance) %>%
-    
     ggplot(aes(centers, tot.withinss)) +
     geom_point(color = "#2c3e50") +
     geom_line(color = "#2c3e50") +
     labs(title = "Scree Plot") +
     theme_tq()
 
+## Step 5 - Apply UMAP
+    # let's plot the `UMAP` 2D visualization to help us investigate cluster assignments. 
+umap_results <- stock_date_matrix_tbl %>%
+    select(-symbol) %>%
+    umap()
 
+    # Now, combine the `layout` from the `umap_results` with the `symbol` column from the `stock_date_matrix_tbl`. 
+umap_results_tbl <- umap_results$layout %>%
+    as_tibble() %>%
+    bind_cols(stock_date_matrix_tbl %>% select(symbol)) 
 
+umap_results_tbl
 
+    # Finally, let's make a quick visualization of the `umap_results_tbl`.
 
-
-
-
-
+umap_results_tbl %>%
+    ggplot(aes(V1, V2)) +
+    geom_point(alpha = 0.5, color = "#2c3e50") +
+    theme_tq() +
+    labs(title = "UMAP Projection")
 
 
