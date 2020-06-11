@@ -123,3 +123,44 @@ umap_kmeans_results_tbl %>%
     scale_color_tq()
 
 
+# Interactively Exploring Clusters, using functions
+# This is an interactive demo that is an extension of what we've learned so far. You are not required to produce any code in this section. However, it presents an interesting case to see how we can explore the clusters using the `plotly` library with the `ggplotly()` function. 
+
+get_kmeans <- function(k = 3) {
+    
+    k_means_obj <- k_means_mapped_tbl %>%
+        filter(centers == k) %>%
+        pull(k_means) %>%
+        pluck(1)
+    
+    umap_kmeans_results_tbl <- k_means_obj %>% 
+        augment(stock_date_matrix_tbl) %>%
+        select(symbol, .cluster) %>%
+        left_join(umap_results_tbl, by = "symbol") %>%
+        left_join(sp_500_index_tbl %>% select(symbol, company, sector),
+                  by = "symbol")
+    
+    return(umap_kmeans_results_tbl)
+}
+
+# plot the K-Means and UMAP results after applying functions 
+# Plot Customer Segmentation .
+plot_cluster <- function(k = 3) {
+    
+    g <- get_kmeans(k) %>%
+        
+        mutate(label_text = str_glue("Stock: {symbol}
+                                     Company: {company}
+                                     Sector: {sector}")) %>%
+        
+        ggplot(aes(V1, V2, color = .cluster, text = label_text)) +
+        geom_point(alpha = 0.5) +
+        theme_tq() +
+        scale_color_manual(values = palette_light() %>% rep(3))
+    
+    g %>%
+        ggplotly(tooltip = "text")
+    
+}
+
+plot_cluster(k = 10)
