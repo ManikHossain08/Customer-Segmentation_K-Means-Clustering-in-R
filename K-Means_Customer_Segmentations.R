@@ -95,4 +95,31 @@ umap_results_tbl %>%
     theme_tq() +
     labs(title = "UMAP Projection")
 
+## Step 6 - Combine K-Means and UMAP
+
+    # Next, we combine the K-Means clusters and the UMAP 2D representation
+    # First, pull out the K-Means for 10 Centers. Use this since beyond this value the Scree Plot flattens. 
+
+k_means_obj <- k_means_mapped_tbl %>%
+    filter(centers == 10) %>%
+    pull(k_means) %>%
+    pluck(1)
+
+    # we'll combine the clusters from the `k_means_obj` with the `umap_results_tbl`.
+
+umap_kmeans_results_tbl <- k_means_obj %>% 
+    augment(stock_date_matrix_tbl) %>%
+    select(symbol, .cluster) %>%
+    left_join(umap_results_tbl, by = "symbol") %>%
+    left_join(sp_500_index_tbl %>% select(symbol, company, sector),
+              by = "symbol")
+
+    # Plot the K-Means and UMAP results.
+
+umap_kmeans_results_tbl %>%
+    ggplot(aes(V1, V2, color = .cluster)) +
+    geom_point(alpha = 0.5) +
+    theme_tq() +
+    scale_color_tq()
+
 
