@@ -1,4 +1,4 @@
-# Customer-Segmentation-using-R
+# Customer-Segmentation-using-R (K-Means Clustering)
 
 # Goal with a Question:
 - Which stock prices behave similarly?
